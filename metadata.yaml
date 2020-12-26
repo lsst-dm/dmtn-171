@@ -13,11 +13,11 @@ serial_number: "171"
 doc_id: "DMTN-171"
 
 # Title of the document, without the series/serial designation
-doc_title: "Crowded field processing with the LSST Science Pipelines"
+doc_title: "Fall 2020 status of crowded field processing with the LSST Alert Production Pipelines"
 
 # Author names, ordered as a list. Each author name should be formatted as 'First Last'
 authors:
-  - "Ian Sullivan"
+  - "Ian Sullivan, Eric Bellm"
 
 # Current document revision date, YYYY-MM-DD
 # Only set this field if you need to manually fix the revision date;
@@ -37,7 +37,7 @@ authors:
 copyright: "2020, University of Washington"
 
 # Description. A short, 1-2 sentence statemement used by document indices.
-description: "A report on the current state of the LSST Science Pipelines' ability to process deep images in the galactic bulge."
+description: "A report on the Fall 2020 state of the LSST Alert Production Pipelines' ability to process deep images in the galactic bulge."
 
 # Abstract, if available
 # abstract: >
