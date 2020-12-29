@@ -70,7 +70,129 @@ must meet requirements even in crowded fields.
 The status of the processing also will inform ongoing cadence planning for the overall survey.
 
 The scope of this technote does not include obtaining photometry for static sources in direct images (except insofar as it is required to conduct image differencing), nor comparisons to dedicated crowded field processing codes.
-DMTN-077 addressess these issues.
+`DMTN-077 <https://dmtn-077.lsst.io>`_ addressess these issues.
+
+Overview of the data
+====================
+
+To test the LSST Science Pipelines on crowded fields, we downloaded public data from the DECam survey of the galactic bulge by `Saha et. al <https://arxiv.org/pdf/1902.05637.pdf>`_.
+The full survey consists of six fields observed in the six ``ugrizy`` bands, though for this investigation we limited the analysis to g- and i-bands for the two fields closest to the galactic center (B1 and B2).
+These data are available on ``lsst-devl`` at ``/datasets/decam``, with the processed data available at ``/project/sullivan/saha2``.
+The 
+
+.. _field-coordinates:
+ 
+======  ========  ========
+Field   RA        Dec
+======  ========  ========
+B1      270.8917  -30.0339
+B2      272.3500  -31.4350
+======  ========  ========
+
+====== ====== ====== ======
+Field  band   2013   2015
+====== ====== ====== ======
+B1       g    30     44
+B2       g    31     44
+B1       i    53     44
+B2       i    49     44
+====== ====== ====== ======
+
+
+Running the Science Pipelines
+=============================
+
+Single Frame Processing
+-----------------------
+
+.. figure:: /_static/psf_B1_2013_g.png
+ :name: psf_B1_2013_g
+
+ PSFs for each of the g-band visits from 2013 in field B1, for a CCD in the center of the focal plane.
+
+.. figure:: /_static/psf_B2_2013_g.png
+ :name: psf_B2_2013_g
+
+ PSFs for each of the g-band visits from 2013 in field B2, for a CCD in the center of the focal plane.
+
+.. figure:: /_static/psf_B1_2013_i.png
+ :name: psf_B1_2013_i
+
+ PSFs for each of the i-band visits from 2013 in field B1, for a CCD in the center of the focal plane.
+
+.. figure:: /_static/psf_B2_2013_i.png
+ :name: psf_B2_2013_i
+
+ PSFs for each of the i-band visits from 2013 in field B2, for a CCD in the center of the focal plane.
+
+.. figure:: /_static/psf_B1_2015_g.png
+ :name: psf_B1_2015_g
+
+ PSFs for each of the g-band visits from 2015 in field B1, for a CCD in the center of the focal plane.
+
+.. figure:: /_static/psf_B2_2015_g.png
+ :name: psf_B2_2015_g
+
+ PSFs for each of the g-band visits from 2015 in field B2, for a CCD in the center of the focal plane.
+
+.. figure:: /_static/psf_B1_2015_i.png
+ :name: psf_B1_2015_i
+
+ PSFs for each of the i-band visits from 2015 in field B1, for a CCD in the center of the focal plane.
+
+.. figure:: /_static/psf_B2_2015_i.png
+ :name: psf_B2_2015_i
+
+ PSFs for each of the i-band visits from 2015 in field B2, for a CCD in the center of the focal plane.
+
+
+Warping and coaddition
+----------------------
+
+.. figure:: /_static/Mosaic_of_g_nImages.png
+ :name: Mosaic_of_g_nImages_2013
+
+ Overview mosaic of the number of g-band images coadded for both fields from 2013.
+
+.. figure:: /_static/Mosaic_of_g_coadds.png
+ :name: Mosaic_of_g_coadds_2013
+
+ Overview mosaic of the g-band coadded deep images for both fields from 2013.
+
+.. figure:: /_static/Mosaic_of_i_nImages.png
+ :name: Mosaic_of_i_nImages_2013
+
+ Overview mosaic of the number of i-band images coadded for both fields from 2013.
+
+.. figure:: /_static/Mosaic_of_i_coadds.png
+ :name: Mosaic_of_i_coadds_2013
+
+ Overview mosaic of the i-band coadded deep images for both fields from 2013.
+
+.. figure:: /_static/Mosaic_of_g_nImages_2015.png
+ :name: Mosaic_of_g_nIamges_2015
+
+ Overview mosaic of the number of g-band images coadded for both fields from 2015.
+
+.. figure:: /_static/Mosaic_of_g_coadds_2015.png
+ :name: Mosaic_of_g_coadds_2015
+
+ Overview mosaic of the g-band coadded deep images for both fields from 2015.
+
+.. figure:: /_static/Mosaic_of_i_nImages_2015.png
+ :name: Mosaic_of_i_nImages_2015
+
+ Overview mosaic of the number of i-band images coadded for both fields from 2015.
+
+.. figure:: /_static/Mosaic_of_i_coadds_2015.png
+ :name: Mosaic_of_i_coadds_2015
+
+ Overview mosaic of the i-band coadded deep images for both fields from 2015.
+
+
+Image differencing and ``ap_pipe``
+----------------------------------
+
 
 Future work
 ===========
