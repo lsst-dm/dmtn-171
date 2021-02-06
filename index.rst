@@ -83,12 +83,12 @@ The size of the processed data amounts to 7.0Tb on disk, which can be fully recr
 .. table:: Field coordinates
    :name: field_coordinates
 
-   ======  ========  ========
-   Field   RA        Dec
-   ======  ========  ========
-   B1      270.8917  -30.0339
-   B2      272.3500  -31.4350
-   ======  ========  ========
+   ======  ========================  ======================== ==================== =====================
+   Field   RA                        Dec                      Galactic longitude   Galactic latitude
+   ======  ========================  ======================== ==================== =====================
+   B1      :math:`270.8917^{\circ}`  :math:`-30.0339^{\circ}` :math:`1.02^{\circ}` :math:`-3.92^{\circ}`
+   B2      :math:`272.3500^{\circ}`  :math:`-31.4350^{\circ}` :math:`0.40^{\circ}` :math:`-5.70^{\circ}`
+   ======  ========================  ======================== ==================== =====================
 
 .. table:: Summary of visits
    :name: visit_summary
@@ -184,8 +184,8 @@ The PSF is used for very little in the current Science Pipelines; our standard A
 However, the accuracy of the PSF does impact source measurement and many science use cases.
 It is likely that the current implementation of PSFex is sufficient for internal processing of crowded field data, but scientists with strict requirements on the quality of the PSF would be advised to measure the PSF independently in post-processing with a carefully tuned algorithm.
 
-In figures :numref:`psf_B1_2013_g` through :numref:`psf_B2_2015_i` below, we show the PSF for every visit for CCD 42, located near the center of the focal plane.
-The color scale is set to highlight features in the wings, while contours at logarithmic intervals capture the shape of the core of the PSF.
+In :numref:`psf_B1_2013_g` through :numref:`psf_B2_2015_i` below, we show the PSF for every visit for CCD 42, located near the center of the focal plane.
+The color scale is set to highlight features in the wings with a square root stretch, while contours at logarithmic intervals capture the shape of the core of the PSF.
 Each PSF is normalized to have a sum of 1, and the same color scale and contour levels are used for every image.
 
 .. figure:: /_static/psf_B1_2013_g.png
@@ -228,39 +228,158 @@ Each PSF is normalized to have a sum of 1, and the same color scale and contour 
 
  PSFs for each of the i-band visits from 2015 in field B2, for a CCD in the center of the focal plane.
 
+While g-band generally has clean and reasonably symmetric-looking PSFs, some i-band visits show worrisome features in the wings of the PSF.
+As noted above, these are not likely to impact the performance of the Science Pipelines, though it is undesirable and will likely impact downstream science users.
+For these crowded fields, our current PSF modeling algorithm PSFex is sufficient to run the Science Pipelines, but a more sophisticated algorithm would be desireable.
 
 Density of measured sources on a single ccd
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-
+Perhaps the most important metric for evaluating the performance of the Science Pipelines on crowded fields is the measured density of sources.
+In `DMTN-077 <https://dmtn-077.lsst.io>`_ a significant drop was seen in the fraction of sources detected with the 2017 Science Pipelines compared to processing of the same fields in the `DECam Plane Survey (DECAPS) <http://arxiv.org/abs/1710.01309>`_.
+In figures :numref:`source_density_B1_g` through :numref:`source_density_B2_i` below, we plot histograms of the number of sources detected in single frame measurement for a single ccd across all visits.
+The chosen ccd lies roughly in the center of the focal plane, and has an average density of sources for the field.
+These histograms exclude any sources flagged as being saturated, too close to an edge of the ccd, or contaminated by a cosmic ray.
+The wide distribution seen for each field is believed to be due to the range of seeing throughout the observations (:numref:`seeing_B1_g` - :numref:`seeing_B2_i`).
 
 .. figure:: /_static/Source_density_B1_g_ccd42.png
  :name: source_density_B1_g
 
  Density of detected sources across all visits for field B1 in g-band, for ccd 42.
- Compare to :numref:`dia_source_density_B1_g` for the number of sources in the difference images.
 
 .. figure:: /_static/Source_density_B2_g_ccd42.png
  :name: source_density_B2_g
 
  Density of detected sources across all visits for field B2 in g-band, for ccd 42.
- Compare to :numref:`dia_source_density_B2_g` for the number of sources in the difference images.
 
 .. figure:: /_static/Source_density_B1_i_ccd42.png
  :name: source_density_B1_i
 
  Density of detected sources across all visits for field B1 in i-band, for ccd 42.
- Compare to :numref:`dia_source_density_B1_i` for the number of sources in the difference images.
 
 .. figure:: /_static/Source_density_B2_i_ccd42.png
  :name: source_density_B2_i
 
  Density of detected sources across all visits for field B2 in i-band, for ccd 42.
- Compare to :numref:`dia_source_density_B2_i` for the number of sources in the difference images.
 
+Source counts
+^^^^^^^^^^^^^
+
+For a more in-depth look at the performance of the Science Pipelines, we should look at the source counts as a function of magnitude.
+From these, it should be apparent if the broad range in the density of sources seen in :numref:`source_density_B1_g` - :numref:`source_density_B2_i` is consistent with varying depth due to seeing, and whether we are systematically undercounting faint sources as suggested by Figure 8 of `DMTN-077 <https://dmtn-077.lsst.io>`_.
+In :numref:`source_counts_2013_B1_g` - :numref:`source_counts_2015_B2_i` below we plot the source counts as a function of magnitude, separated by year, field and band.
+Since there are on the order of 40 visits included in each plot, we do not include a legend but instead list the visits with anomalous source counts in :numref:`photometry`.
+Those visits appear to have the same features as the others, but are shifted by several magnitudes brighter or fainter, indicating a photometric calibration error.
+It is noteworthy that all of the anomalous visits in 2015 were taken sequentially, and all but two of the anomalous visits in 2013 were taken sequentially.
+The two exceptions in 2013 are 216988 and 216048, but these have very poor seeing at 7.56 and 8.11 pixels, respectively, which explains their unusually shallow depth.
+With the exception of those anomalous visits, the source counts are consistent within each band and field for each observing season, and exhibit the same features at the same magnitudes up to each visits' cutoff.
+
+
+.. figure:: /_static/Source_counts_2013_B1_g_ccd42.png
+ :name: source_counts_2013_B1_g
+
+ Source counts for all visits in 2013 for field B1 in g-band, for ccd 42.
+ Visits with an apparant photometric offset are listed in :numref:`photometry`.
+
+.. figure:: /_static/Source_counts_2015_B1_g_ccd42.png
+ :name: source_counts_2015_B1_g
+
+ Source counts for all visits in 2015 for field B1 in g-band, for ccd 42.
+ Visits with an apparant photometric offset are listed in :numref:`photometry`.
+
+.. figure:: /_static/Source_counts_2013_B2_g_ccd42.png
+ :name: source_counts_2013_B2_g
+
+ Source counts for all visits in 2013 for field B2 in g-band, for ccd 42.
+ Visits with an apparant photometric offset are listed in :numref:`photometry`.
+
+.. figure:: /_static/Source_counts_2015_B2_g_ccd42.png
+ :name: source_counts_2015_B2_g
+
+ Source counts for all visits in 2015 for field B2 in g-band, for ccd 42.
+ Visits with an apparant photometric offset are listed in :numref:`photometry`.
+
+.. figure:: /_static/Source_counts_2013_B1_i_ccd42.png
+ :name: source_counts_2013_B1_i
+
+ Source counts for all visits in 2013 for field B1 in i-band, for ccd 42.
+ Visits with an apparant photometric offset are listed in :numref:`photometry`.
+
+.. figure:: /_static/Source_counts_2015_B1_i_ccd42.png
+ :name: source_counts_2015_B1_i
+
+ Source counts for all visits in 2015 for field B1 in i-band, for ccd 42.
+ Visits with an apparant photometric offset are listed in :numref:`photometry`.
+
+.. figure:: /_static/Source_counts_2013_B2_i_ccd42.png
+ :name: source_counts_2013_B2_i
+
+ Source counts for all visits in 2013 for field B2 in i-band, for ccd 42.
+ Visits with an apparant photometric offset are listed in :numref:`photometry`.
+
+.. figure:: /_static/Source_counts_2015_B2_i_ccd42.png
+ :name: source_counts_2015_B2_i
+
+ Source counts for all visits in 2015 for field B2 in i-band, for ccd 42.
+ Visits with an apparant photometric offset are listed in :numref:`photometry`.
+
+.. table:: Visits with inconsistent photometry
+   :name: photometry
+
+   +------+------+-------+------------------------------------------------+-----------------------------------+
+   | Year | Band | Field | Visits                                         | Plot link                         |
+   +======+======+=======+================================================+===================================+
+   | 2013 | g    | B1    | 210508, 210555, 210597, 210633, 210669         | :numref:`source_counts_2013_B1_g` |
+   +------+------+-------+------------------------------------------------+-----------------------------------+
+   | 2015 | g    | B1    | 427628                                         | :numref:`source_counts_2015_B1_g` |
+   +------+------+-------+------------------------------------------------+-----------------------------------+
+   | 2013 | g    | B2    | 209942, 210514, 210603, 210639, 210675         | :numref:`source_counts_2013_B2_g` |
+   +------+------+-------+------------------------------------------------+-----------------------------------+
+   | 2015 | g    | B2    | 427626                                         | :numref:`source_counts_2015_B2_g` |
+   +------+------+-------+------------------------------------------------+-----------------------------------+
+   | 2013 | i    | B1    | 210631, 210667, 216988                         | :numref:`source_counts_2013_B1_i` |
+   +------+------+-------+------------------------------------------------+-----------------------------------+
+   | 2015 | i    | B1    | 427616                                         | :numref:`source_counts_2015_B1_i` |
+   +------+------+-------+------------------------------------------------+-----------------------------------+
+   | 2013 | i    | B2    | 210559, 210601, 210637, 210673, 216048         | :numref:`source_counts_2013_B2_i` |
+   +------+------+-------+------------------------------------------------+-----------------------------------+
+   | 2015 | i    | B2    | 427624                                         | :numref:`source_counts_2015_B2_i` |
+   +------+------+-------+------------------------------------------------+-----------------------------------+
+
+Timing
+^^^^^^
+
+A final concern is the amount of time it will take to process each ccd in crowded fields.
+While a typical ccd took just under 4 minutes to process, there was a long tail of ccds that took far longer (:numref:`Timing_2013` and :numref:`Timing_2015`).
+The increased time was entirely spent in two steps: matching the detected objects to a reference catalog, and measuring the difference image sources.
+The time required for matching appeared to be non-linear, with the ccds with the largest number of sources and reference objects to match requiring up to four hours to complete.
+Our matching algorithm was not designed for these very large numbers of sources, so we are encouraged by the results even if the performance is slow. 
+
+.. figure:: /_static/Decam_saha_pccd_time_2013.png
+ :name: Timing_2013
+
+ Distribution of the time required to process each ccd, including both g- and i-band from 2013.
+ Not shown are several ccds that took longer than an hour.
+
+.. figure:: /_static/Decam_saha_pccd_time_2015.png
+ :name: Timing_2015
+
+ Distribution of the time required to process each ccd, including both g- and i-band from 2015.
+ Not shown are several ccds that took longer than an hour.
 
 Warping and coaddition
 ----------------------
+
+While warping and coaddition are significant components of the Science Pipelines, neither is challenged by high stellar density.
+No modifications were needed to build deep coadded templates for these fields, and no work is anticipated to be needed to support future processing of crowded fields.
+In :numref:`Mosaic_of_g_nImages_2013` - :numref:`Mosaic_of_i_coadds_2015` below, we show the full mosaic [*]_ of the two overlapping fields for each band and year separately.
+We also include the diagnostic N-images, which count the number of visits that contributed to each pixel in the coadd.
+From these images, we can see that the coverage across the two fields is close to uniform.
+The small regions where the two fields overlap show a corresponding increase in the nImage count, while the coadded images themselves appear continuous.
+There are gaps in places in the nImages, but these reflect known chip defects and the saturated cores and wings of bright stars, which are expected.
+This analysis did not invlove any full-focal plane astrometry or background fitting, so it is noteworthy that the background appears smooth and continuous.
+
+.. [*] The image resolution has been reduced by a factor of 20 to simplify storage and display.
 
 .. figure:: /_static/Mosaic_of_g_nImages.png
  :name: Mosaic_of_g_nImages_2013
@@ -306,44 +425,103 @@ Warping and coaddition
 Image differencing and ``ap_pipe``
 ----------------------------------
 
-Density of DIA sources on a single ccd
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The initial stages of ``ap_pipe`` perform `Single Frame Processing`_, and face the same challenges detailed above.
+After processing the science image, the next step is to create a template and perform image differencing.
+We have no concerns about creating the template, but if we get overlapping source residuals from image differencing it could be very challenging to detect and measure real transients and variable sources.
+In :numref:`Calexp_B2_2013_i` - :numref:`Diffim_B2_2013_g` below we show the science image, the warped template prior to PSF matching, and the resulting image difference for a g-band and an i-band observation.
+For this example, the science images are both from the 2013 observing run, using templates built from the better-seeing 2015 observations.
+In both cases the science image has slightly worse seeing than the template, allowing us to use the `Alard&Lupton <https://arxiv.org/abs/astro-ph/9712287>`_ image differencing algorithm in the standard convolution mode.
 
-.. figure:: /_static/DiaSource_density_B1_g_ccd42.png
- :name: dia_source_density_B1_g
+.. figure:: /_static/Compare_216144_i_42_calexp.png
+ :name: Calexp_B2_2013_i
 
- Density of detected DIA sources across all visits for field B1 in g-band, for ccd 42.
- Compare to :numref:`source_density_B1_g` for the number of sources in the original images.
+ I-band science visit 216144 ccd 42 from 2013 B2.
+ The color scale is locked to the scale of the template in :numref:`Template_B2_2013_i`
 
-.. figure:: /_static/DiaSource_density_B2_g_ccd42.png
- :name: dia_source_density_B2_g
+.. figure:: /_static/Compare_216144_i_42_template.png
+ :name: Template_B2_2013_i
 
- Density of detected DIA sources across all visits for field B2 in g-band, for ccd 42.
- Compare to :numref:`source_density_B2_g` for the number of sources in the original images.
+ Deep coadd template for i-band visit 216144 ccd 42.
+ The color scale uses a Asinh stretch to emphasize faint features.
 
-.. figure:: /_static/DiaSource_density_B1_i_ccd42.png
- :name: dia_source_density_B1_i
+.. figure:: /_static/Compare_216144_i_42_diff.png
+ :name: Diffim_B2_2013_i
 
- Density of detected DIA sources across all visits for field B1 in i-band, for ccd 42.
- Compare to :numref:`source_density_B1_i` for the number of sources in the original images.
+ Image difference for i-band visit 216144 ccd 42.
+ The color scale is locked to the scale of the template in :numref:`Template_B2_2013_i`
 
-.. figure:: /_static/DiaSource_density_B2_i_ccd42.png
- :name: dia_source_density_B2_i
+.. figure:: /_static/Compare_223465_g_42_calexp.png
+ :name: Calexp_B2_2013_g
 
- Density of detected DIA sources across all visits for field B2 in i-band, for ccd 42.
- Compare to :numref:`source_density_B2_i` for the number of sources in the original images.
+ G-band science visit 223465 ccd 42 from 2013 B2.
+ The color scale is locked to the scale of the template in :numref:`Template_B2_2013_g`
 
-Future work
-===========
+.. figure:: /_static/Compare_223465_g_42_template.png
+ :name: Template_B2_2013_g
 
-fake analysis under Gen 3 for completeness
+ Deep coadd template for g-band visit 223465 ccd 42.
+ The color scale uses a Asinh stretch to emphasize faint features.
 
-.. Add content here.
-.. Do not include the document title (it's automatically added from metadata.yaml).
+.. figure:: /_static/Compare_223465_g_42_diff.png
+ :name: Diffim_B2_2013_g
 
-.. .. rubric:: References
+ Image difference for g-band visit 223465 ccd 42.
+ The color scale is locked to the scale of the template in :numref:`Template_B2_2013_g`
 
-.. Make in-text citations with: :cite:`bibkey`.
+Several features are apparent from the above images.
+Most importantly, despite the sea of overlapping sources in the input images and the imperfect subtraction, the residuals are still isolated.
+Thus, we can still detect and measure sources in the difference image, though we have far more to deal with than for a typical observation.
+Most of the residuals are also unfortunately typical of those we see in less crowded fields, which is indicative of our need to improve the implementation our image differencing algorithm in general.
+The improvements that the Alert Production team is currently working on should result in better subtractions for crowded fields as well.
 
-.. .. bibliography:: local.bib lsstbib/books.bib lsstbib/lsst.bib lsstbib/lsst-dm.bib lsstbib/refs.bib lsstbib/refs_ads.bib
-..    :style: lsst_aa
+
+..
+  Density of DIA sources on a single ccd
+  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  .. figure:: /_static/DiaSource_density_B1_g_ccd42.png
+   :name: dia_source_density_B1_g
+  
+   Density of detected DIA sources across all visits for field B1 in g-band, for ccd 42.
+   Compare to :numref:`source_density_B1_g` for the number of sources in the original images.
+  
+  .. figure:: /_static/DiaSource_density_B2_g_ccd42.png
+   :name: dia_source_density_B2_g
+  
+   Density of detected DIA sources across all visits for field B2 in g-band, for ccd 42.
+   Compare to :numref:`source_density_B2_g` for the number of sources in the original images.
+  
+  .. figure:: /_static/DiaSource_density_B1_i_ccd42.png
+   :name: dia_source_density_B1_i
+  
+   Density of detected DIA sources across all visits for field B1 in i-band, for ccd 42.
+   Compare to :numref:`source_density_B1_i` for the number of sources in the original images.
+  
+  .. figure:: /_static/DiaSource_density_B2_i_ccd42.png
+   :name: dia_source_density_B2_i
+  
+   Density of detected DIA sources across all visits for field B2 in i-band, for ccd 42.
+   Compare to :numref:`source_density_B2_i` for the number of sources in the original images.
+
+Conclusions and future work
+===========================
+
+This investigation has stress-tested the LSST Science Pipelines, and uncovered several algorithmic components that need attention.
+Some of those improvements, such as upgrading the PSF determiner, were necessary to process the data and have already been completed.
+Others, such as the fidelity of image differencing, had been previously identified and the improvements are under active development.
+
+Summary of the challenges to processing crowded fields identified in this analysis:
+
+- The PSF determiner was upgraded to PSFex, which is able to run on crowded fields. However, it does not appear to be able to model the wings of the PSF (see :numref:`psf_B1_2013_g` through :numref:`psf_B2_2015_i`).
+- The cosmic ray detection and repair algorithm still fails for some ccds, and will require either careful tuning of the existing parameters or a more sophisticated implementation.
+- Photometric calibration is at times inconsistent, with offsets of several magnitudes in the worst cases (:numref:`source_counts_2013_B1_g` - :numref:`source_counts_2015_B2_i`). This is likely to improve with a better PSF model.
+- The improved PSF model will also be needed to model bright stars.
+- We are able to measure sources at densities greater than 500,000 per square degree under good conditions, and the source counts suggest that we are not undercounting sources.
+- Future work should inject fake sources in the analysis to measure completeness.
+- The source matching algorithm will require optimization in crowded fields, as the current implementation can take over an hour to process a single ccd in extreme cases.
+- The quality of subtraction in image differencing remains a barrier for generating alerts. The residuals around bright sources do appear isolated, but the number of false detections is too high.
+
+Once we have made progress on the above challenges, we could revisit the analysis of these fields.
+Crowded fields will present the most difficult conditions for PSF measurement and image differencing, but improvements in both components are underway.
+
+
