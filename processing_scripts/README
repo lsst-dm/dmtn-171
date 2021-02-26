@@ -1,0 +1,67 @@
+To run the scripts in this directory, you will need to create the following subdirectories, then run the scripts in the order below.
+Scripts that can be run in parallel are grouped together.
+
+Directories:
+_____________________________
+
+Calibration products:
+
+    calib
+    calib_construction
+
+Calibrated single-visit exposures:
+
+    processed_data
+
+Warped exposures to coadd:
+
+    warped_exposures
+
+Deep coadds:
+    cwcoadds_processed
+    cwcoadds_2015
+
+Output from running `ap_pipe`:
+    ap_pipe_slow/cw_2013
+    ap_pipe_slow/cw_2015
+
+Output logs:
+    slurm_calib
+    slurm_pccd
+    slurm_warp
+    slurm_cw
+    slurm_cw_2015
+    slurm_ap_cw
+    slurm_ap_cw_2013
+
+
+Scripts:
+_____________________________
+
+Calibration products:
+    initial_calibration.sl
+        construct_bias.sl
+            construct_flat.sl
+
+Run single-frame measurement:
+    processCcd_B1_2013_i.sl
+    processCcd_B2_2013_g.sl
+    processCcd_B2_2015_i.sl
+    processCcd_B1_2015_g.sl
+    processCcd_B2_2013_i.sl
+    processCcd_B1_2013_g.sl
+    processCcd_B1_2015_i.sl
+    processCcd_B2_2015_g.sl
+
+Generate deep coadds:
+    make_skymap.sl
+        warp_slurm.sl
+            assemble_cw_g_slurm.sl
+            assemble_cw_i_slurm.sl
+            assemble_cw_g_slurm_2015.sl
+            assemble_cw_i_slurm_2015.sl
+
+Run `ap_pipe`:
+    run_ap_pipe_cw.sl
+    run_ap_pipe_cw_2013.sl
+
