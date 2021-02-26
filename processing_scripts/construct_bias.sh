@@ -2,7 +2,6 @@
 
 source /software/lsstsw/stack/loadLSST.bash
 setup lsst_distrib
-# setup -r /project/sullivan/code/obs_decam -j
 
 decam_repo='/datasets/decam/'
 

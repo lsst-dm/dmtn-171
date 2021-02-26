@@ -2,8 +2,6 @@
 
 source /software/lsstsw/stack/loadLSST.bash
 setup lsst_distrib
-# setup -r /project/sullivan/code/pipe_tasks
-setup -r /project/sullivan/code/ip_isr -j
 
 decam_repo='/datasets/decam/'
 output='processed_data/'
