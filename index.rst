@@ -63,22 +63,22 @@ Crucially, the AP processing must meet its requirements even in the most crowded
 Of particular importance are the transient reporting latency (OTT1 and OTR1; LSR-REQ-0117 and LSR-REQ-0025), 
 the reliability with which images are processed (sciVisitAlertDelay and sciVisitAlertFailure; OSS-REQ-0112), 
 the photometric and astrometric accuracy of the resulting catalogs (dmL1AstroErr, dmL1PhotoErr, and photoZeroPointOffset; OSS-REQ-0149 and OSS-REQ-0152), 
-completeness and purity metrics for transients (OSS-REQ-0353) and solar system objects ( OSS-REQ-0354),
+completeness and purity metrics for transients (OSS-REQ-0353) and solar system objects (OSS-REQ-0354),
 and source misassociation for transients (OSS-REQ-0160) and solar system objects (OSS-REQ-0159).
 Accordingly, large-scale tests on precursor datasets are necessary to identify where improvements are needed in order to meet requirements.
 The status of the processing also will inform ongoing cadence planning for the overall survey.
 
 The scope of this technote does not include obtaining photometry for static sources in direct images (except insofar as it is required to conduct image differencing), nor comparisons to dedicated crowded field processing codes.
-`DMTN-077 <https://dmtn-077.lsst.io>`_ addressess these issues.
+`DMTN-077 <https://dmtn-077.lsst.io>`_ addresses those issues.
 
 Overview of the data
 ====================
 
-To test the LSST Science Pipelines on crowded fields, we acquired public data from the DECam survey of the galactic bulge by `Saha et. al <https://arxiv.org/pdf/1902.05637.pdf>`_.
+To test the LSST Science Pipelines on crowded fields, we acquired public data from the DECam survey of the galactic bulge by `Saha et. al 2019 <https://arxiv.org/pdf/1902.05637.pdf>`_.
 The full survey consists of six fields at low galactic latitudes observed in the six ``ugrizy`` bands, though for this investigation we limited the analysis to g- and i-bands for the two fields closest to the galactic center (B1 and B2, :numref:`field_coordinates`).
 The two fields selected for this test were observed in 2013 and 2015 to similar depth in both bands (:numref:`visit_summary`).
-These data are available on ``lsst-devl`` at ``/datasets/decam``, while the processed data and the scripts that produced them available at ``/project/sullivan/saha2``.
-The size of the processed data amounts to 7.0Tb on disk, which can be fully recreated following the instructions in ``/project/sullivan/saha2/README``.
+These data are available on ``lsst-devl`` at ``/datasets/decam``, while the processed data is available in ``/project/sullivan/saha2``.
+The size of the processed data amounts to 7.0Tb on disk, which can be fully recreated using release 21.0 of the Science Pipelines following the instructions in that directory, which have also been copied to `<https://github.com/lsst-dm/dmtn-171/processing_scripts>`_ for public access.
 
 .. table:: Field coordinates
    :name: field_coordinates
@@ -129,7 +129,7 @@ As a result, we expect image differencing to fare much worse when running ``ap_p
 Running the Science Pipelines
 =============================
 
-Running the LSST Science Pipelines on observations of crowded fields follows the same steps as for fields with lower densities, but a few of those steps require modification to work properly.
+Running the LSST Science Pipelines on observations of crowded fields follows the same steps as for fields with lower densities, but in this investigation a few of those steps required modification to work properly.
 Here, we divide processing into three distinct stages:
 
 1. **Single Frame Processing**: includes applying flat field and bias corrections, Instrument Signature Removal, and astrometric and photometric calibration.
@@ -141,14 +141,14 @@ Here, we divide processing into three distinct stages:
 Single Frame Processing
 -----------------------
 
-The initial stages of Single Frame Processing require no modifications to accomodate crowded fields.
-Once processing moves on to the first instance of source detection, however, it becomes important to set the detection threshold to a fixed value rather than the default of a multiple of the standard deviation of the background.
+The initial stages of Single Frame Processing required no modifications to accommodate crowded fields.
+In source detection, however, it became necessary to set the detection threshold to a fixed value rather than the default of a multiple of the standard deviation of the background.
 There may be no pixels without a detectable source in the exposures, so the measured background level will be incorrect and the number of sources used for PSF modeling will be unpredictable, and possibly too few.
 For this test, we took typical detection thresholds from DECam HiTS observations and found that those eliminated the related processing errors.
 Further refinement would likely yield improved results.
 All of the modifications needed to run single frame processing on these data can be found in :numref:`processCcd_config`, below.
 
-.. table:: Modified config settings needed for single frame processing
+.. table:: Modified config settings needed for single frame processing using release 21.0 of the Science Pipelines.
    :name: processCcd_config
 
    ============================================== ======== ======
@@ -166,10 +166,10 @@ All of the modifications needed to run single frame processing on these data can
 
 Beyond the source detection thresholds, it was necessary to modify two additional components.
 We found that the default algorithm for measuring the PSF, a simple PCA-based model, simply failed when run on most of the visits from these crowded fields.
-However, PSFex was able to successfully measure the PSF, and since it was already available in the Science Pipelines we made it the default for all cameras.
+However, PSFex was able to successfully measure the PSF, and since it was already supposed to be the default in the Science Pipelines (per RFC-312) we carried out that overdue implementation for all cameras.
 Thus, no further modifications are needed for future processing.
 
-The final component that requires modification is the cosmic ray detection and repair algorithm.
+The final component that required modification is the cosmic ray detection and repair algorithm.
 As noted above, the assumptions behind the pixel value statistics are incorrect in crowded fields.
 We set the detection thresholds to the same values as for source detection (:numref:`processCcd_config`), and while this works in most cases, for just under 1% of the exposures ``processCcd.py`` fails with a fatal error.
 In these cases the failure appears to be due to every pixel in the image being identified as a cosmic ray.
@@ -181,8 +181,7 @@ Evaluation of the Point Spread Function (PSF)
 
 The accuracy of the measurement of the Point Spread Function (PSF) is our greatest concern with processing crowded fields, since it is typically not possible to find a sufficient number of isolated stellar sources to measure.
 The PSF is used for very little in the current Science Pipelines; our standard Alard&Lupton-style image differencing depends only on the calculated size of the PSF to compare with that of the template, and not on the shape of the PSF.
-However, the accuracy of the PSF does impact source measurement and many science use cases.
-It is likely that the current implementation of PSFex is sufficient for internal processing of crowded field data, but scientists with strict requirements on the quality of the PSF would be advised to measure the PSF independently in post-processing with a carefully tuned algorithm.
+However, the accuracy of the PSF does impact source measurement.
 
 In :numref:`psf_B1_2013_g` through :numref:`psf_B2_2015_i` below, we show the PSF for every visit for CCD 42, located near the center of the focal plane.
 The color scale is set to highlight features in the wings with a square root stretch, while contours at logarithmic intervals capture the shape of the core of the PSF.
@@ -229,14 +228,15 @@ Each PSF is normalized to have a sum of 1, and the same color scale and contour 
  PSFs for each of the i-band visits from 2015 in field B2, for a CCD in the center of the focal plane.
 
 While g-band generally has clean and reasonably symmetric-looking PSFs, some i-band visits show worrisome features in the wings of the PSF.
-As noted above, these are not likely to impact the performance of the Science Pipelines, though it is undesirable and will likely impact downstream science users.
-For these crowded fields, our current PSF modeling algorithm PSFex is sufficient to run the Science Pipelines, but a more sophisticated algorithm would be desireable.
+As noted above, these are not likely to impact the performance of Alert Production, though it is undesirable.
+For these crowded fields, our current PSF modeling algorithm PSFex is sufficient to run Alert Production, but a more robust algorithm would be desirable.
 
 Density of measured sources on a single ccd
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Perhaps the most important metric for evaluating the performance of the Science Pipelines on crowded fields is the measured density of sources.
 In `DMTN-077 <https://dmtn-077.lsst.io>`_ a significant drop was seen in the fraction of sources detected with the 2017 Science Pipelines compared to processing of the same fields in the `DECam Plane Survey (DECAPS) <http://arxiv.org/abs/1710.01309>`_.
+In that analysis, the very crowded region with 500k sources per square degree in DECAPS had only 200k sources detected per square degree when processed with the Science Pipelines, suggesting that the Science Pipelines processing was missing many faint sources.
+While we do not have an externally-produced catalog of the same field to compare against, we do measure a significantly higher density of sources than was seen in that analysis, roughly in line with the DECAPS results.
 In figures :numref:`source_density_B1_g` through :numref:`source_density_B2_i` below, we plot histograms of the number of sources detected in single frame measurement for a single ccd across all visits.
 The chosen ccd lies roughly in the center of the focal plane, and has an average density of sources for the field.
 These histograms exclude any sources flagged as being saturated, too close to an edge of the ccd, or contaminated by a cosmic ray.
@@ -353,7 +353,7 @@ A final concern is the amount of time it will take to process each ccd in crowde
 While a typical ccd took just under 4 minutes to process, there was a long tail of ccds that took far longer (:numref:`Timing_2013` and :numref:`Timing_2015`).
 The increased time was entirely spent in two steps: matching the detected objects to a reference catalog, and measuring the difference image sources.
 The time required for matching appeared to be non-linear, with the ccds with the largest number of sources and reference objects to match requiring up to four hours to complete.
-Our matching algorithm was not designed for these very large numbers of sources, so we are encouraged by the results even if the performance is slow. 
+Our matching algorithm was not optimized for these very large numbers of sources, however, so we are encouraged by the results even if the performance is slow. 
 
 .. figure:: /_static/Decam_saha_pccd_time_2013.png
  :name: Timing_2013
@@ -469,9 +469,9 @@ In both cases the science image has slightly worse seeing than the template, all
  The color scale is locked to the scale of the template in :numref:`Template_B2_2013_g`
 
 Several features are apparent from the above images.
-Most importantly, despite the sea of overlapping sources in the input images and the imperfect subtraction, the residuals are still isolated.
+Most importantly, despite the sea of overlapping sources in the input images and the imperfect subtraction, the resulting DIASources are still isolated.
 Thus, we can still detect and measure sources in the difference image, though we have far more to deal with than for a typical observation.
-Most of the residuals are also unfortunately typical of those we see in less crowded fields, which is indicative of our need to improve the implementation our image differencing algorithm in general.
+Most of the DIASources show artifacts characteristic of imperfect subtraction, such as dipoles and ringing patterns.
 The improvements that the Alert Production team is currently working on should result in better subtractions for crowded fields as well.
 
 
@@ -514,10 +514,9 @@ Summary of the challenges to processing crowded fields identified in this analys
 
 - The PSF determiner was upgraded to PSFex, which is able to run on crowded fields. However, it does not appear to be able to model the wings of the PSF (see :numref:`psf_B1_2013_g` through :numref:`psf_B2_2015_i`).
 - The cosmic ray detection and repair algorithm still fails for some ccds, and will require either careful tuning of the existing parameters or a more sophisticated implementation.
-- Photometric calibration is at times inconsistent, with offsets of several magnitudes in the worst cases (:numref:`source_counts_2013_B1_g` - :numref:`source_counts_2015_B2_i`). This is likely to improve with a better PSF model.
-- The improved PSF model will also be needed to model bright stars.
+- Photometric calibration is at times inconsistent, with offsets of several magnitudes in the worst cases (:numref:`source_counts_2013_B1_g` - :numref:`source_counts_2015_B2_i`). If this is due to poor flux measurements it will likely improve with a better PSF model, but that will require further study.
 - We are able to measure sources at densities greater than 500,000 per square degree under good conditions, and the source counts suggest that we are not undercounting sources.
-- Future work should inject fake sources in the analysis to measure completeness.
+- In future processing of these data we will use newly-developed pipelines to inject fake sources in the analysis to measure completeness, and we will perform a systematic visual inspection to determine purity.
 - The source matching algorithm will require optimization in crowded fields, as the current implementation can take over an hour to process a single ccd in extreme cases.
 - The quality of subtraction in image differencing remains a barrier for generating alerts. The residuals around bright sources do appear isolated, but the number of false detections is too high.
 
