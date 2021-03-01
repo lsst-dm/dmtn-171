@@ -46,8 +46,6 @@
 
 .. note::
 
-   **This technote is not yet published.**
-
    A report on the Fall 2020 state of the LSST Alert Production Pipelines' ability to process deep images in the galactic bulge.
 
 Introduction
