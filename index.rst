@@ -40,6 +40,8 @@
 
 .. Please do not modify tocdepth; will be fixed when a new Sphinx theme is shipped.
 
+**DOI:** `10.5281/zenodo.5172677 <https://doi.org/10.5281/zenodo.5172677>`_
+
 .. sectnum::
 
 .. TODO: Delete the note below before merging new content to the master branch.
