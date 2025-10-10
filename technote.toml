@@ -1,0 +1,28 @@
+[technote]
+id = "DMTN-171"
+series_id = "DMTN"
+canonical_url = "https://dmtn-171.lsst.io/"
+github_url = "https://github.com/lsst-dm/dmtn-171"
+github_default_branch = "main"
+date_created = 2020-11-30T23:58:20Z
+organization.name = "Vera C. Rubin Observatory"
+organization.ror = "https://ror.org/048g3cy84"
+doi = "10.71929/rubin/2998003"
+license.id = "CC-BY-4.0"
+[[technote.authors]]
+name = {given = "Ian S.", family = "Sullivan"}
+internal_id = "sullivanis"
+orcid = "https://orcid.org/0000-0001-8708-251X"
+[[technote.authors.affiliations]]
+name = "University of Washington"
+internal_id = "Washington"
+ror = "https://ror.org/00cvxb145"
+
+[[technote.authors]]
+name = {given = "Eric C.", family = "Bellm"}
+internal_id = "bellme"
+orcid = "https://orcid.org/0000-0001-8018-5348"
+[[technote.authors.affiliations]]
+name = "University of Washington"
+internal_id = "Washington"
+ror = "https://ror.org/00cvxb145"
