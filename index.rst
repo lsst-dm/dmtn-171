@@ -1,3 +1,11 @@
+#####################################################################################
+Fall 2020 status of crowded field processing with the LSST Alert Production Pipelines
+#####################################################################################
+
+.. abstract::
+
+   A report on the Fall 2020 state of the LSST Alert Production Pipelines' ability to process deep images in the galactic bulge.
+
 ..
   Technote content.
 
@@ -36,13 +44,10 @@
 
    Feel free to delete this instructional comment.
 
-:tocdepth: 3
 
-.. Please do not modify tocdepth; will be fixed when a new Sphinx theme is shipped.
 
 **DOI:** `10.5281/zenodo.5172677 <https://doi.org/10.5281/zenodo.5172677>`_
 
-.. sectnum::
 
 .. TODO: Delete the note below before merging new content to the master branch.
 
@@ -522,5 +527,4 @@ Summary of the challenges to processing crowded fields identified in this analys
 
 Once we have made progress on the above challenges, we could revisit the analysis of these fields.
 Crowded fields will present the most difficult conditions for PSF measurement and image differencing, but improvements in both components are underway.
-
 
