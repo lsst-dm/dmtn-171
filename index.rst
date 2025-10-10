@@ -46,7 +46,7 @@ Fall 2020 status of crowded field processing with the LSST Alert Production Pipe
 
 
 
-**DOI:** `10.5281/zenodo.5172677 <https://doi.org/10.5281/zenodo.5172677>`_
+**DOI:** `10.71929/rubin/2998003 <https://doi.org/110.71929/rubin/2998003>`_
 
 
 Introduction

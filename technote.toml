@@ -7,6 +7,7 @@ github_default_branch = "main"
 date_created = 2020-11-30T23:58:20Z
 organization.name = "Vera C. Rubin Observatory"
 organization.ror = "https://ror.org/048g3cy84"
+doi = "10.71929/rubin/2998003"
 license.id = "CC-BY-4.0"
 [[technote.authors]]
 name = {given = "Ian S.", family = "Sullivan"}
